@@ -211,12 +211,21 @@ def runTrial(trial_pars, data_file, subjInfo, mode):
 ## define the run block
 def runBlock(mode, DATA_FILE, SUBJ_INFO):
     # prepare the trials
-    if mode == 'prac': testList = trialList[:]
-    if mode == 'test': testList = trialList[:]
+    if mode == 'prac': testList = trialList[:]   # 4 prac trials
+    if mode == 'test': testList = trialList[:]*2 # 8 test trials
     random.shuffle(testList)
 
+    trialCount = 0
     for pars in testList:
-        runTrial(pars, data_file, participant, mode)
+        if trialCount%4 == 0 and trialCount != 0:
+            text_msg.text = u"休息一下！按空格键继续。"
+            text_msg.draw()
+            win.flip()
+            event.waitKeys(keyList=['space'])
+            
+        runTrial(pars, DATA_FILE, SUBJ_INFO, mode)
+        
+        trialCount += 1
 
     
 ## ---------- Real experiment starts from here ----------##
@@ -267,11 +276,12 @@ win.flip()
 core.wait(3)
 
 ## close the window
+data_file.close()
 win.close()
 core.quit()
-    
-    
-    
+
+
+
 
 
 
